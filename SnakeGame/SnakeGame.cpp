@@ -113,43 +113,46 @@ public:
 	}
 	void ControlSnake()
 	{
-		MoveSide prevSide = sideToMove;
-		if(_kbhit())
+		while(true)
 		{
-			char charToMove = _getch();
-			switch (charToMove)
+			MoveSide prevSide = sideToMove;
+			if (_kbhit())
 			{
-				case 'w':
+				char charToMove = _getch();
+				switch (charToMove)
 				{
-					if (prevSide != Down)
+					case 'w':
 					{
-						sideToMove = Up;
+						if (prevSide != Down)
+						{
+							sideToMove = Up;
+						}
+						break;
 					}
-					break;
-				}
-				case 's':
-				{
-					if (prevSide != Up)
+					case 's':
 					{
-						sideToMove = Down;
+						if (prevSide != Up)
+						{
+							sideToMove = Down;
+						}
+						break;
 					}
-					break;
-				}
-				case 'a':
-				{
-					if (prevSide != Right)
+					case 'a':
 					{
-						sideToMove = Left;
+						if (prevSide != Right)
+						{
+							sideToMove = Left;
+						}
+						break;
 					}
-					break;
-				}
-				case 'd':
-				{
-					if(prevSide!=Left)
+					case 'd':
 					{
-						sideToMove = Right;
+						if (prevSide != Left)
+						{
+							sideToMove = Right;
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
@@ -265,11 +268,14 @@ int main()
 	Snake snake(5, 5, grid,game);
 	
 	auto lastMoveTime = chrono::steady_clock::now();
+	thread controlThread([&snake]()
+		{
+			snake.ControlSnake();
+		}
+	);
 
 	while (game.isNotFailed==true)
 	{
-		snake.ControlSnake();
-
 		auto currentTime = chrono::steady_clock::now();
 
 		if (duration_cast<chrono::milliseconds>(currentTime - lastMoveTime).count() >= 300)
